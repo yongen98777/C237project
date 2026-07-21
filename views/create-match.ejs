@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Match - TourneyHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>🎮 TourneyHub</h1>
+            <div>
+                <a href="/">Home</a>
+                <a href="/tournaments">Tournaments</a>
+                <a href="/matches">Matches</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>Create Match</h1>
+            
+            <% if (error) { %>
+                <div class="alert error"><%= error %></div>
+            <% } %>
+            
+            <form action="/matches" method="POST">
+                <div class="form-group">
+                    <label>Tournament *</label>
+                    <select name="tournament_id" required>
+                        <option value="">Select a tournament</option>
+                        <% tournaments.forEach(t => { %>
+                            <option value="<%= t.id %>" <%= selected_tournament == t.id ? 'selected' : '' %>>
+                                <%= t.name %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Team 1 *</label>
+                    <select name="team1_id" required>
+                        <option value="">Select Team 1</option>
+                        <% teams.forEach(t => { %>
+                            <option value="<%= t.id %>"><%= t.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Team 2 *</label>
+                    <select name="team2_id" required>
+                        <option value="">Select Team 2</option>
+                        <% teams.forEach(t => { %>
+                            <option value="<%= t.id %>"><%= t.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Scheduled Date/Time</label>
+                    <input type="datetime-local" name="scheduled_time">
+                </div>
+                
+                <button type="submit" class="btn">Create Match</button>
+                <a href="/matches" class="btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

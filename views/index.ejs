@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TourneyHub - Gaming Tournament System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>🎮 TourneyHub</h1>
+            <div>
+                <a href="/">Home</a>
+                <a href="/tournaments">Tournaments</a>
+                <a href="/matches">Matches</a>
+                <% if (isAuthenticated) { %>
+                    <a href="/dashboard">Dashboard</a>
+                    <a href="/auth/logout">Logout</a>
+                <% } else { %>
+                    <a href="/auth/login">Login</a>
+                    <a href="/auth/register">Register</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <% if (success) { %>
+            <div class="alert success"><%= success %></div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert error"><%= error %></div>
+        <% } %>
+    </div>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Welcome to <span>TourneyHub</span></h1>
+            <p>Manage gaming tournaments, track matches, and compete with players worldwide</p>
+            <a href="/tournaments" class="btn-primary">Browse Tournaments</a>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <h3><%= stats.total || 0 %></h3>
+                <p>Total Tournaments</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.registration || 0 %></h3>
+                <p>Open Registration</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.ongoing || 0 %></h3>
+                <p>Ongoing</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.completed || 0 %></h3>
+                <p>Completed</p>
+            </div>
+        </div>
+
+        <h2>Recent Tournaments</h2>
+        <div class="tournament-grid">
+            <% if (recentTournaments && recentTournaments.length > 0) { %>
+                <% recentTournaments.forEach(t => { %>
+                    <div class="tournament-card">
+                        <h3><%= t.name %></h3>
+                        <div class="game">🎮 <%= t.game %> • <%= t.format %></div>
+                        <div class="prize">💰 $<%= t.prize_pool %></div>
+                        <span class="badge badge-<%= t.status %>"><%= t.status %></span>
+                        <p class="creator">by <%= t.creator_name || 'Unknown' %></p>
+                        <a href="/tournaments/<%= t.id %>" class="view-link">View Details →</a>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p class="no-data">No tournaments available yet.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 TourneyHub - Gaming Tournament Management System</p>
+        </div>
+    </footer>
+</body>
+</html>

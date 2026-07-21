@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournaments - TourneyHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>🎮 TourneyHub</h1>
+            <div>
+                <a href="/">Home</a>
+                <a href="/tournaments">Tournaments</a>
+                <a href="/matches">Matches</a>
+                <% if (isAuthenticated) { %>
+                    <a href="/dashboard">Dashboard</a>
+                    <% if (user && (user.role === 'admin' || user.role === 'organizer')) { %>
+                        <a href="/tournaments/create">+ Create</a>
+                    <% } %>
+                    <a href="/auth/logout">Logout</a>
+                <% } else { %>
+                    <a href="/auth/login">Login</a>
+                    <a href="/auth/register">Register</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <% if (success) { %>
+            <div class="alert success"><%= success %></div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert error"><%= error %></div>
+        <% } %>
+
+        <div class="page-header">
+            <h1>Tournaments</h1>
+            <% if (isAuthenticated && (user.role === 'admin' || user.role === 'organizer')) { %>
+                <a href="/tournaments/create" class="btn-primary">+ Create Tournament</a>
+            <% } %>
+        </div>
+
+        <!-- Filters -->
+        <form action="/tournaments" method="GET" class="filters">
+            <input type="text" name="search" placeholder="Search tournaments..." value="<%= filters.search || '' %>">
+            <select name="status">
+                <option value="">All Status</option>
+                <option value="registration" <%= filters.status === 'registration' ? 'selected' : '' %>>Registration</option>
+                <option value="ongoing" <%= filters.status === 'ongoing' ? 'selected' : '' %>>Ongoing</option>
+                <option value="completed" <%= filters.status === 'completed' ? 'selected' : '' %>>Completed</option>
+            </select>
+            <input type="text" name="game" placeholder="Game name" value="<%= filters.game || '' %>">
+            <button type="submit" class="btn">Filter</button>
+        </form>
+
+        <div class="tournament-grid">
+            <% if (tournaments && tournaments.length > 0) { %>
+                <% tournaments.forEach(t => { %>
+                    <div class="tournament-card">
+                        <h3><%= t.name %></h3>
+                        <div class="game">🎮 <%= t.game %> • <%= t.format %></div>
+                        <div class="prize">💰 $<%= t.prize_pool %></div>
+                        <div class="teams-info">👥 Max Teams: <%= t.max_teams %></div>
+                        <span class="badge badge-<%= t.status %>"><%= t.status %></span>
+                        <p class="creator">by <%= t.creator_name || 'Unknown' %></p>
+                        <div class="card-actions">
+                            <a href="/tournaments/<%= t.id %>" class="view-link">View Details →</a>
+                            <% if (isAuthenticated && user && (user.role === 'admin' || user.role === 'organizer')) { %>
+                                <a href="/tournaments/<%= t.id %>/edit" class="edit-link">Edit</a>
+                            <% } %>
+                            <% if (isAuthenticated && user && user.role === 'admin') { %>
+                                <form action="/tournaments/<%= t.id %>?_method=DELETE" method="POST" style="display:inline;">
+                                    <button type="submit" class="delete-btn" onclick="return confirm('Delete this tournament?')">Delete</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p class="no-data">No tournaments found.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 TourneyHub - Gaming Tournament Management System</p>
+        </div>
+    </footer>
+</body>
+</html>

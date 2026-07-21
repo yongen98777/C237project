@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matches - TourneyHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>🎮 TourneyHub</h1>
+            <div>
+                <a href="/">Home</a>
+                <a href="/tournaments">Tournaments</a>
+                <a href="/matches">Matches</a>
+                <% if (isAuthenticated) { %>
+                    <a href="/dashboard">Dashboard</a>
+                    <% if (user && (user.role === 'admin' || user.role === 'organizer')) { %>
+                        <a href="/matches/create">+ Create</a>
+                    <% } %>
+                    <a href="/auth/logout">Logout</a>
+                <% } else { %>
+                    <a href="/auth/login">Login</a>
+                    <a href="/auth/register">Register</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <% if (success) { %>
+            <div class="alert success"><%= success %></div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert error"><%= error %></div>
+        <% } %>
+
+        <div class="page-header">
+            <h1>All Matches</h1>
+            <% if (isAuthenticated && (user.role === 'admin' || user.role === 'organizer')) { %>
+                <a href="/matches/create" class="btn-primary">+ Create Match</a>
+            <% } %>
+        </div>
+
+        <div class="matches-list">
+            <% if (matches && matches.length > 0) { %>
+                <% matches.forEach(match => { %>
+                    <div class="match-card">
+                        <div class="match-tournament">
+                            <strong><%= match.tournament_name || 'Unknown Tournament' %></strong>
+                        </div>
+                        <div class="match-teams">
+                            <div class="team">
+                                <span><%= match.team1_name || 'TBD' %></span>
+                            </div>
+                            <div class="vs">⚔️</div>
+                            <div class="team">
+                                <span><%= match.team2_name || 'TBD' %></span>
+                            </div>
+                        </div>
+                        <div class="match-details">
+                            <div class="match-score">
+                                Score: <strong><%= match.team1_score %> - <%= match.team2_score %></strong>
+                                <% if (match.winner_name) { %>
+                                    <span class="winner">🏆 Winner: <%= match.winner_name %></span>
+                                <% } %>
+                            </div>
+                            <div class="match-status">
+                                <span class="badge badge-<%= match.status %>"><%= match.status %></span>
+                                <span class="match-time">
+                                    <%= match.scheduled_time ? new Date(match.scheduled_time).toLocaleString() : 'Scheduled: TBD' %>
+                                </span>
+                            </div>
+                        </div>
+                        <a href="/tournaments/<%= match.tournament_id %>" class="view-link">View Tournament →</a>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p class="no-data">No matches found.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 TourneyHub - Gaming Tournament Management System</p>
+        </div>
+    </footer>
+</body>
+</html>

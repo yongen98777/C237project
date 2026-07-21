@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= tournament.name %> - TourneyHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>🎮 TourneyHub</h1>
+            <div>
+                <a href="/">Home</a>
+                <a href="/tournaments">Tournaments</a>
+                <a href="/matches">Matches</a>
+                <% if (isAuthenticated) { %>
+                    <a href="/dashboard">Dashboard</a>
+                    <a href="/auth/logout">Logout</a>
+                <% } else { %>
+                    <a href="/auth/login">Login</a>
+                    <a href="/auth/register">Register</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <% if (success) { %>
+            <div class="alert success"><%= success %></div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert error"><%= error %></div>
+        <% } %>
+
+        <div class="tournament-header">
+            <h1><%= tournament.name %></h1>
+            <div class="tournament-meta">
+                <span class="badge badge-<%= tournament.status %>"><%= tournament.status %></span>
+                <p>Game: <strong><%= tournament.game %></strong></p>
+                <p>Format: <strong><%= tournament.format %></strong></p>
+                <p>Prize Pool: <strong>$<%= tournament.prize_pool %></strong></p>
+                <p>Max Teams: <strong><%= tournament.max_teams %></strong></p>
+                <p>Created by: <strong><%= tournament.creator_name || 'Unknown' %></strong></p>
+                <% if (tournament.start_date && tournament.end_date) { %>
+                    <p>Dates: <strong><%= tournament.start_date %> to <%= tournament.end_date %></strong></p>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="tournament-actions">
+            <% if (isAuthenticated && user && (user.role === 'admin' || user.role === 'organizer')) { %>
+                <a href="/tournaments/<%= tournament.id %>/edit" class="btn-secondary">Edit Tournament</a>
+            <% } %>
+            <% if (isAuthenticated) { %>
+                <a href="/matches/create?tournament_id=<%= tournament.id %>" class="btn-primary">Create Match</a>
+            <% } %>
+        </div>
+
+        <div class="section">
+            <h2>Teams</h2>
+            <div class="team-grid">
+                <% if (teams && teams.length > 0) { %>
+                    <% teams.forEach(team => { %>
+                        <div class="team-card">
+                            <h4><%= team.name %></h4>
+                            <p>Captain: <%= team.captain_name || 'Unknown' %></p>
+                            <% if (isAuthenticated) { %>
+                                <form action="/teams/<%= team.id %>/join" method="POST">
+                                    <button type="submit" class="btn-small">Join Team</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No teams registered yet.</p>
+                <% } %>
+            </div>
+            
+            <% if (isAuthenticated) { %>
+                <div class="create-team">
+                    <h3>Create a Team</h3>
+                    <form action="/teams" method="POST">
+                        <input type="hidden" name="tournament_id" value="<%= tournament.id %>">
+                        <input type="text" name="name" placeholder="Team name" required>
+                        <button type="submit" class="btn-small">Create Team</button>
+                    </form>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="section">
+            <h2>Matches</h2>
+            <div class="matches-list">
+                <% if (matches && matches.length > 0) { %>
+                    <% matches.forEach(match => { %>
+                        <div class="match-card">
+                            <div class="match-teams">
+                                <span><%= match.team1_name || 'TBD' %></span>
+                                <span class="vs">vs</span>
+                                <span><%= match.team2_name || 'TBD' %></span>
+                            </div>
+                            <div class="match-score">
+                                Score: <strong><%= match.team1_score %> - <%= match.team2_score %></strong>
+                            </div>
+                            <div class="match-info">
+                                <span class="badge badge-<%= match.status %>"><%= match.status %></span>
+                                <% if (match.winner_name) { %>
+                                    <span>Winner: <strong><%= match.winner_name %></strong></span>
+                                <% } %>
+                                <span>Scheduled: <%= match.scheduled_time ? new Date(match.scheduled_time).toLocaleString() : 'TBD' %></span>
+                            </div>
+                            <% if (isAuthenticated && user && (user.role === 'admin' || user.role === 'organizer') && match.status !== 'completed') { %>
+                                <div class="match-actions">
+                                    <form action="/matches/<%= match.id %>/score?_method=PUT" method="POST" class="score-form">
+                                        <input type="number" name="team1_score" placeholder="Team 1 Score" min="0">
+                                        <input type="number" name="team2_score" placeholder="Team 2 Score" min="0">
+                                        <select name="winner_id">
+                                            <option value="">Select Winner</option>
+                                            <option value="<%= match.team1_id %>">Team 1</option>
+                                            <option value="<%= match.team2_id %>">Team 2</option>
+                                        </select>
+                                        <button type="submit" class="btn-small">Update Score</button>
+                                    </form>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No matches scheduled yet.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 TourneyHub - Gaming Tournament Management System</p>
+        </div>
+    </footer>
+</body>
+</html>

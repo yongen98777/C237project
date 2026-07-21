@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TourneyHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>🎮 TourneyHub</h1>
+            <div>
+                <a href="/">Home</a>
+                <a href="/tournaments">Tournaments</a>
+                <a href="/matches">Matches</a>
+                <a href="/dashboard">Dashboard</a>
+                <% if (user && (user.role === 'admin' || user.role === 'organizer')) { %>
+                    <a href="/tournaments/create">+ Create Tournament</a>
+                    <a href="/matches/create">+ Create Match</a>
+                <% } %>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <% if (success) { %>
+            <div class="alert success"><%= success %></div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert error"><%= error %></div>
+        <% } %>
+
+        <div class="dashboard-header">
+            <h1>Welcome, <%= user ? user.username : 'User' %>!</h1>
+            <div class="user-info">
+                <p>Role: <strong><%= user ? user.role : 'N/A' %></strong></p>
+                <p>Gaming Handle: <strong><%= user ? user.gaming_handle || 'Not set' : 'N/A' %></strong></p>
+                <p>XP Points: <strong><%= user ? user.xp_points : 0 %></strong></p>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3><%= stats.total || 0 %></h3>
+                <p>Total Tournaments</p>
+            </div>
+        </div>
+
+        <h2>Your Recent Tournaments</h2>
+        <div class="tournament-grid">
+            <% if (tournaments && tournaments.length > 0) { %>
+                <% tournaments.forEach(t => { %>
+                    <div class="tournament-card">
+                        <h3><%= t.name %></h3>
+                        <div class="game">🎮 <%= t.game %> • <%= t.format %></div>
+                        <div class="prize">💰 $<%= t.prize_pool %></div>
+                        <span class="badge badge-<%= t.status %>"><%= t.status %></span>
+                        <a href="/tournaments/<%= t.id %>" class="view-link">View Details →</a>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p class="no-data">You haven't joined any tournaments yet.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 TourneyHub - Gaming Tournament Management System</p>
+        </div>
+    </footer>
+</body>
+</html>

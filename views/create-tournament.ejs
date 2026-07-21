@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Tournament - TourneyHub</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>🎮 TourneyHub</h1>
+            <div>
+                <a href="/">Home</a>
+                <a href="/tournaments">Tournaments</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>Create Tournament</h1>
+            
+            <% if (error) { %>
+                <div class="alert error"><%= error %></div>
+            <% } %>
+            
+            <form action="/tournaments" method="POST">
+                <div class="form-group">
+                    <label>Tournament Name *</label>
+                    <input type="text" name="name" required placeholder="e.g., Summer Showdown 2026">
+                </div>
+                <div class="form-group">
+                    <label>Game *</label>
+                    <input type="text" name="game" required placeholder="e.g., Valorant, CS2, Dota 2">
+                </div>
+                <div class="form-group">
+                    <label>Format *</label>
+                    <input type="text" name="format" required placeholder="e.g., 5v5, 1v1, 3v3">
+                </div>
+                <div class="form-group">
+                    <label>Prize Pool ($)</label>
+                    <input type="number" name="prize_pool" step="0.01" placeholder="1000.00" value="1000.00">
+                </div>
+                <div class="form-group">
+                    <label>Max Teams</label>
+                    <input type="number" name="max_teams" value="16">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date" value="2026-07-01">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" name="end_date" value="2026-07-31">
+                    </div>
+                </div>
+                <button type="submit" class="btn">Create Tournament</button>
+                <a href="/tournaments" class="btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
